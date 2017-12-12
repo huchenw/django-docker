@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    volumes:
+      - ./db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=djangodocker
+      - MYSQL_USER=django
+      - MYSQL_PASSWORD=django
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf:/etc/nginx/conf.d
+      - django_admin_static:/django_admin_static
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: always
+
+  web:
+    build: .
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: uwsgi --ini uwsgi.ini
+    working_dir: /code/web
+    volumes:
+      - .:/code
+      - django_admin_static:/usr/local/lib/python3.6/site-packages/django/contrib/admin/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: .
+    command: celery -A web worker -l info
+    working_dir: /code/web
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+  
+volumes:
+  django_admin_static:

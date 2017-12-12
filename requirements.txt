@@ -1,0 +1,5 @@
+ Django
+ mysqlclient
+ uwsgi
+ celery
+ redis
