@@ -9,7 +9,7 @@ $ git clone git@github.com:huchenw/django-docker.git
 ```
 Run docker-compose commands to start containers:
 ```bash
-$ docker-compose up
+$ docker-compose up -d
 ```
 Now you can access the application at <http://localhost> or <http://192.168.99.100>(Docker Toolbox).</br>
 ## Django Admin
