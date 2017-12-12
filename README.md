@@ -24,7 +24,7 @@ $ python manage.py createsuperuser
 ```
 ## Celery Results
 Redis is used as broker for Celery <http://docs.celeryproject.org/en/latest/getting-started/brokers/redis.html>.</br>
-The official tutorial <http://docs.celeryproject.org/en/latest/django/> tells us how to use Celery with Django .</br>
+The official tutorial <http://docs.celeryproject.org/en/latest/django/> tells us how to use Celery with Django.</br>
 You can check the Celery results from logs:
 ```bash
 $ docker-compose logs celery
