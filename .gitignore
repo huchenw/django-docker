@@ -104,4 +104,7 @@ ENV/
 .vscode/
 
 # db-data
-db/
+mysql/
+
+# static files for nginx
+staticfiles/

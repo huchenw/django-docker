@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  db:
-    image: mysql:latest
+  mysql:
+    image: mysql:5.7
     volumes:
-      - ./db:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - ./mysql:/var/lib/mysql
+    expose:
+      - "3306"
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -19,7 +19,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf:/etc/nginx/conf.d
-      - django_admin_static:/django_admin_static
+      - ./web/staticfiles:/django_static
     ports:
       - "80:80"
     depends_on:
@@ -27,22 +27,23 @@ services:
 
   redis:
     image: redis:alpine
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     restart: always
 
   web:
     build: .
-    # command: python manage.py runserver 0.0.0.0:8000
+    # command: python manage.py runserver 0:8000
+    # ports:
+    #   - "8000:8000"
     command: uwsgi --ini uwsgi.ini
     working_dir: /code/web
     volumes:
       - .:/code
-      - django_admin_static:/usr/local/lib/python3.6/site-packages/django/contrib/admin/static
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
-      - db
+      - mysql
       - redis
 
   celery:
@@ -52,8 +53,5 @@ services:
     volumes:
       - .:/code
     depends_on:
-      - db
+      - mysql
       - redis
-  
-volumes:
-  django_admin_static:
